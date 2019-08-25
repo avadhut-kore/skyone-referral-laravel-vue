@@ -93,12 +93,12 @@ Route::namespace('User')->middleware(['auth:api','UserMiddleware'])->prefix('/us
 	Route::get('referal/details/{id}','ReferalController@getReferalDetails');
 
 	// Referal status Controller Routes
-	Route::get('referal-status-list','ReferalStatusController@getReferalStatus');
+	Route::get('referal-status-list','ReferalStatusController@getReferalStatusList');
 	Route::get('referal-status/details/{id}','ReferalStatusController@getReferalStatusDetails');
 
 	// Reward type Controller Routes
-	Route::get('rewart-type-list','RewardTypeController@getRewardType');
-	Route::get('rewart-type/details/{id}','RewardTypeController@getRewardTypeDetails');
+	Route::get('reward-type-list','RewardTypeController@getRewardTypes');
+	Route::get('reward-type/details/{id}','RewardTypeController@getRewardTypeDetails');
 	
 });
 

@@ -10,14 +10,14 @@ class Product extends Model
 	use SoftDeletes;
 	
     public function referals() {
-        return $this->belongsTo('App\Product','product_id');
+        return $this->belongsTo('App\Models\Referal','product_id');
     }
 
     public function category() {
-        return $this->belongsTo('App\Category','category_id');
+        return $this->belongsTo('App\Models\Category','category_id');
     }
 
     public function reward_type() {
-        return $this->belongsTo('App\RewardType','reward_type_id');
+        return $this->belongsTo('App\Models\RewardType','reward_type_id');
     }
 }

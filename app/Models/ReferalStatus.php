@@ -10,6 +10,6 @@ class ReferalStatus extends Model
 	use SoftDeletes;
 
     public function referal() {
-        return $this->belongsTo('App\Referal','referal_id');
+        return $this->belongsTo('App\Models\Referal','referal_id');
     }
 }

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 
-use App\Product;
 use Illuminate\Http\Request;
 use File;
 use Input;
 use Session;
 use Validator;
+
+
+use App\Traits\Product;
 
 class ProductController extends Controller
 {

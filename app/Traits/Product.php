@@ -10,7 +10,7 @@ use Hash;
 use Crypt;
 use Config;
 // use model
-use App\Product as ProductModel;
+use App\Models\Product as ProductModel;
 
 use File;
 use Input;
@@ -24,9 +24,10 @@ trait Product {
         $this->product = $prod;
     }
 
-    public function getProducts()
+    public function getAllProducts()
     {
         $products = $this->product->where('is_active',1)->get();
+        // print_r($products->count()); exit;
         if($products->count() == 0) {
             return response()->json([
                 'status' => 'error',
@@ -36,9 +37,9 @@ trait Product {
             ],200);
         }
 
-        $products = [];
+        $products_data = [];
         foreach($products as $key => $product) {
-            array_push($products, [
+            array_push($products_data, [
                 'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,
@@ -53,11 +54,11 @@ trait Product {
             'status' => 'success',
             'code' => 200,
             'msg' => 'Products found',
-            'data' => $products
+            'data' => $products_data
         ],200);
     }
 
-    public function store(Request $request)
+    public function storeProduct($request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|min:2',
@@ -122,11 +123,11 @@ trait Product {
         }
     }
 
-    public function edit($id)
+    public function editProduct($id)
     {
         $product = $this->product->where('id',$id)->first();
 
-        if($product->count() == 0) {
+        if(!isset($product->id)) {
             return response()->json([
                 'status' => 'error',
                 'code' => 400,
@@ -152,7 +153,7 @@ trait Product {
         ],200);
     }
 
-    public function update(Request $request)
+    public function updateProduct($request)
     {
         $id = $request->Input('id');
         $validator = Validator::make($request->all(), [
@@ -188,7 +189,7 @@ trait Product {
             {
                 $prod = $this->product->where('id',$id)->first();
 
-                if($prod->count() > 0) {
+                if(isset($prod->id)) {
                     if(File::exists(base_path('assets/images/products/'.$prod->image))){
                         File::delete(base_path('assets/images/products/'.$prod->image));
                     }
@@ -229,8 +230,9 @@ trait Product {
             ],200);
         }
     }
+    
     // Tempararly commented...will uncomment when it is required
-    // public function destroy()
+    // public function destroyProduct($request)
     // {
     //     $id = $request->Input('id');
         
@@ -250,11 +252,11 @@ trait Product {
     //  ],200);
     // }
 
-    public function getProductDetails($id) {
+    public function getProductInfo($id) {
 
         $product = $this->product->with('category','reward_type')->where('id',$id)->first();
-        
-        if(isset($product->id)) {
+
+        if(!isset($product->id)) {
             return response()->json([
                 'status' => 'error',
                 'code' => 400,
@@ -282,7 +284,7 @@ trait Product {
         ];
 
         $reward_data = [];
-        if($product->reward_data->count() > 0) {
+        if(isset($product->reward_data->id)) {
             foreach($category->reward_data as $key => $reward) {
                 array_push($reward_data, [
                     'id' => $reward->id,

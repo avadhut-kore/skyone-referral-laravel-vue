@@ -10,14 +10,14 @@ class Referal extends Model
 	use SoftDeletes;
 
     public function product() {
-        return $this->belongsTo('App\Product','product_id');
+        return $this->belongsTo('App\Models\Product','product_id');
     }
 
     public function user() {
-        return $this->belongsTo('App\User','refered_by');
+        return $this->belongsTo('App\User','refered_by','id');
     }
 
     public function referal_status() {
-        return $this->hasMany('App\ReferalStatus','referal_id');
+        return $this->hasOne('App\Models\ReferalStatus','referal_id');
     }
 }

@@ -10,7 +10,7 @@ use Hash;
 use Crypt;
 use Config;
 // use model
-use App\Category as CategoryModel;
+use App\Models\Category as CategoryModel;
 
 use File;
 use Input;
