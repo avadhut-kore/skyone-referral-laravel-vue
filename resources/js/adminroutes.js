@@ -8,6 +8,10 @@ import TotalUserReportComponent from './components/admin/TotalUserReportComponen
 import Error403 from './components/admin/Error403.vue';
 import NotFound from './components/admin/NotFound.vue';
 import Logout from './components/admin/Logout.vue';
+import ProductComponent from './components/admin/ProductComponent.vue';
+import ProductAddComponent from './components/admin/ProductAddComponent.vue';
+import CategoryComponent from './components/admin/CategoryComponent.vue';
+import CategoryAddComponent from './components/admin/CategoryAddComponent.vue';
 import Guard from './middleware';
 import Vue from 'vue';
 import {currentLoginStatus,apiHost} from'./config';
@@ -29,7 +33,8 @@ if(localStorage.getItem('access_token')!==null){
         },
         {
             path: '/',
-            redirect: 'dashboard'
+            redirect: 'dashboard',
+            beforeEnter: Guard.auth
         },
         {
             path: '/user-account',
@@ -53,6 +58,30 @@ if(localStorage.getItem('access_token')!==null){
             path: '/403',
             component: Error403,
             name:'403',
+            beforeEnter: Guard.auth,
+        },
+        {
+            path: '/products-list',
+            component: ProductComponent,
+            name:'products-list',
+            beforeEnter: Guard.auth,
+        },
+        {
+            path: '/product-add',
+            component: ProductAddComponent,
+            name:'product-add',
+            beforeEnter: Guard.auth,
+        },
+        {
+            path: '/categories-list',
+            component: CategoryComponent,
+            name:'categories-list',
+            beforeEnter: Guard.auth,
+        },
+        {
+            path: '/category-add',
+            component: CategoryAddComponent,
+            name:'category-add',
             beforeEnter: Guard.auth,
         },
         {

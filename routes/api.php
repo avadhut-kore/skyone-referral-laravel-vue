@@ -123,7 +123,7 @@ Route::namespace('Admin')->middleware(['auth:api','AdminMiddleware'])->prefix('/
     Route::any('checkuserexist', 'UserController@checkUserExist');
 
     // Category Controller Routes
-	Route::get('category-list','CategoryController@getCategories');
+	Route::any('category-list','CategoryController@getCategories');
 	Route::post('category/store','CategoryController@store');
 	Route::get('category/edit/{id}','CategoryController@edit');
 	Route::post('category/update','CategoryController@update');
