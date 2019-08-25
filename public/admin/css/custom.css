@@ -1,0 +1,10 @@
+.vdp-datepicker__calendar {
+    /*position: static !important;*/
+    position: :static !important;
+    z-index: 100;
+    background: #fff;
+    /*width: 300px;*/
+    width: 208px; 
+    border: 1px solid #ccc;
+    min-height: 290px;
+}
