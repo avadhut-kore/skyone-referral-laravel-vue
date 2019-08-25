@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Referal;
+use App\Referal;
 use Illuminate\Http\Request;
 use File;
 use Input;
@@ -86,8 +86,8 @@ class ReferalController extends Controller
 		],200);
     }
 
-    public function register(Request $request) {
- 		
+    public function store(Request $request) {
+ 	
  		$validator = Validator::make($request->all(), [
     		'product' => 'required',
             'first_name' => 'required|min:2',
@@ -97,7 +97,7 @@ class ReferalController extends Controller
     		'refered_by' => 'required'
     	]);
 
-    	if($validator->fails()) {
+    	if ($validator->fails()) {
     		return response()->json([
     			'status' => 'error',
     			'code' => 400,
@@ -105,8 +105,7 @@ class ReferalController extends Controller
     			'errors' => $validator->errors(),
     			'data' => []
     		],200);
-    	}
-	 	else {
+    	} else {
             
             $this->referal->product_id = $request->Input('product');
 	    	$this->referal->first_name = $request->Input('first_name');
@@ -156,7 +155,7 @@ class ReferalController extends Controller
     	return response()->json([
 			'status' => 'success',
 			'code' => 200,
-			'msg' => 'User found',
+			'msg' => 'Referal found',
 			'data' => [
 				'id' => $referal->id,
                 'product_id' => $referal->product_id,
@@ -252,32 +251,71 @@ class ReferalController extends Controller
 	// 	],200);
 	// }
 	
-	public function getUserDetails($id) {
+	public function getReferalDetails($id) {
 
-        $user = $this->user->where('id',$id)->first();
+        $referal = $this->referal->with('product','user','referal_status')
+                                 ->where('id',$id)
+                                 ->first();
         
-        if($user->count() == 0) {
-    		return response()->json([
-				'status' => 'error',
-				'code' => 400,
-				'msg' => 'User not found',
-				'data' => [],
-			],200);
-    	}
+        if(!isset($referal->id)) {
+            return response()->json([
+                'status' => 'error',
+                'code' => 400,
+                'msg' => 'Referals data not found',
+                'data' => [],
+            ],200);
+        }
 
-    	return response()->json([
-			'status' => 'success',
-			'code' => 200,
-			'msg' => 'Data found',
-			'data' => [
-				'id' => $user->id,
-				'first_name' => $user->first_name,
-				'last_name' => $user->last_name,
-				'email' => $user->email,
-				'city' => $user->city,
-				'mobile_no' => $user->mobile_no,
-				'profession' => $user->profession
-			]
-		],200);
+        $referal_data = [];
+        $arr = [
+            'id' => $referal->id,
+            'first_name' => $referal->first_name,
+            'last_name' => $referal->last_name,
+            'email' => $referal->email,
+            'mobile_no' => $referal->mobile_no,
+            'refered_by' => [
+                'id' => $referal->user->id,
+                'first_name' => $referal->user->first_name,
+                'last_name' => $referal->user->last_name,
+                'email' => $referal->user->email,
+                'city' => $referal->user->city,
+                'mobile_no' => $referal->user->mobile_no,
+                'profession' => $referal->user->profession
+            ],
+            'product' => [
+                'id' => $referal->product->id,
+                'name' => $referal->product->name,
+                'description' => $referal->product->description,
+                'category_id' => $referal->product->category_id,
+                'is_active' => $referal->product->is_active,
+                'reward_type_id' => $referal->product->reward_type_id,
+                'image' => ( $referal->product->image != '') ? base_path().'assets/images/products/'.$referal->product->image : ''
+            ],
+        ];
+
+        if(isset($referal->referal_status->id)) {
+            $arr['referal_status'] = [
+                'id' => $referal->referal_status->id,
+                'referal_id' => $referal->referal_status->referal_id,
+                'is_contacted' => $referal->referal_status->is_contacted,
+                'is_interested' => $referal->referal_status->is_interested,
+                'is_purchased' => $referal->referal_status->is_purchased,
+                'is_referal_rewarded' => $referal->referal_status->is_referal_rewarded,
+                'is_refered_by_rewarded' => $referal->referal_status->is_refered_by_rewarded,
+                'referal_rewarded_type' => $referal->referal_status->referal_rewarded_type,
+                'refered_by_rewarded_type' => $referal->referal_status->refered_by_rewarded_type,
+                'referal_reward_amount' => $referal->referal_status->referal_reward_amount,
+                'refered_by_reward_amount' => $referal->referal_status->refered_by_reward_amount,
+            ];
+        } else {
+            $arr['referal_status'] = [];
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'code' => 200,
+            'msg' => 'Referals Data found',
+            'data' => $arr
+        ],200);
     }
 }

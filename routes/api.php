@@ -60,6 +60,7 @@ Route::middleware(['auth:api'])->group(function () {
 Route::post('checkotpadminlogin','LoginController@checkOtpAdminLogin');
 // define user route here only
 Route::namespace('User')->middleware(['auth:api','UserMiddleware'])->prefix('/user/')->group(function () {
+	
 	Route::any('send-profile-otp','UserController@sendRegistrationOtp');
 	Route::any('verify-profile-otp','UserController@verifyRegistrationOtp');
 	

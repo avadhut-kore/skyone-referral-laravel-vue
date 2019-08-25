@@ -32,15 +32,7 @@ class UserController extends Controller
     {
         //$this->user = $u;
     }
-	/**
-	 * Function to register the user
-	 * 
-	 * @param $request : HTTP Request Object
-	 * 
-	 * @return \Illuminate\Http\Response
-	 *     
-	 */ 
-
+    
     public function getUsers(){
         $users = $this->user->get();
         

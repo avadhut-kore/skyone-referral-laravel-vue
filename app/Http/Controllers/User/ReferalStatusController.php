@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Referal;
-use App\Models\ReferalStatus;
+use App\Referal;
+use App\ReferalStatus;
 use Illuminate\Http\Request;
 use File;
 use Input;
@@ -23,7 +23,7 @@ class ReferalStatusController extends Controller
             $query->with('product','user')->first();
         }])->get();
         
-        if($referals->count() == 0) {
+        if($referal_status->count() == 0) {
             return response()->json([
 				'status' => 'error',
 				'code' => 400,
@@ -42,33 +42,33 @@ class ReferalStatusController extends Controller
                 'is_purchased' => $referal->is_purchased,
                 'is_referal_rewarded' => $referal->is_referal_rewarded,
                 'is_refered_by_rewarded' => $referal->is_refered_by_rewarded,
-                'referal_rewarded_type' => $referal->referal_rewarded_type,
-                'refered_by_rewarded_type' => $referal->refered_by_rewarded_type,
+                'referal_reward_type' => $referal->referal_reward_type,
+                'refered_by_reward_type' => $referal->refered_by_reward_type,
                 'referal_reward_amount' => $referal->referal_reward_amount,
                 'refered_by_reward_amount' => $referal->refered_by_reward_amount,
                 'referal' => [
-                        'id' => $referal->id,
-                        'first_name' => $referal->first_name,
-                        'last_name' => $referal->last_name,
-                        'email' => $referal->email,
-                        'mobile_no' => $referal->mobile_no,
+                        'id' => $referal->referal->id,
+                        'first_name' => $referal->referal->first_name,
+                        'last_name' => $referal->referal->last_name,
+                        'email' => $referal->referal->email,
+                        'mobile_no' => $referal->referal->mobile_no,
                         'refered_by' => [
-                            'id' => $referal->user->id,
-                            'first_name' => $referal->user->first_name,
-                            'last_name' => $referal->user->last_name,
-                            'email' => $referal->user->email,
-                            'city' => $referal->user->city,
-                            'mobile_no' => $referal->user->mobile_no,
-                            'profession' => $referal->user->profession
+                            'id' => $referal->referal->user->id,
+                            'first_name' => $referal->referal->user->first_name,
+                            'last_name' => $referal->referal->user->last_name,
+                            'email' => $referal->referal->user->email,
+                            'city' => $referal->referal->user->city,
+                            'mobile_no' => $referal->referal->user->mobile_no,
+                            'profession' => $referal->referal->user->profession
                         ],
                         'product' => [
-                            'id' => $referal->product->id,
-                            'name' => $referal->product->name,
-                            'description' => $referal->product->description,
-                            'category_id' => $referal->product->category_id,
-                            'is_active' => $referal->product->is_active,
-                            'reward_type_id' => $referal->product->reward_type_id,
-                            'image' => ( $referal->product->image != '') ? base_path().'assets/images/products/'.$referal->product->image : ''
+                            'id' => $referal->referal->product->id,
+                            'name' => $referal->referal->product->name,
+                            'description' => $referal->referal->product->description,
+                            'category_id' => $referal->referal->product->category_id,
+                            'is_active' => $referal->referal->product->is_active,
+                            'reward_type_id' => $referal->referal->product->reward_type_id,
+                            'image' => ( $referal->referal->product->image != '') ? base_path().'assets/images/products/'.$referal->referal->product->image : ''
                         ]
                     ]
                 ];
@@ -84,7 +84,7 @@ class ReferalStatusController extends Controller
 		],200);
     }
 
-    public function register(Request $request) {
+    public function store(Request $request) {
  		
  		$validator = Validator::make($request->all(), [
     		'referal_reward_type' => 'required',
@@ -110,7 +110,8 @@ class ReferalStatusController extends Controller
 	    	$this->referal_status->is_purchased = $request->Input('is_purchased');
 	    	$this->referal_status->is_referal_rewarded = $request->Input('is_referal_rewarded');
 	    	$this->referal_status->is_refered_by_rewarded = $request->Input('is_refered_by_rewarded');
-	    	$this->referal_status->referal_rewarded_type = $request->Input('referal_rewarded_type');
+            $this->referal_status->referal_reward_type = $request->Input('referal_reward_type');
+	    	$this->referal_status->refered_by_reward_type = $request->Input('refered_by_reward_type');
 	    	$this->referal_status->referal_reward_amount = $request->Input('referal_reward_amount');
 	    	$this->referal_status->refered_by_reward_amount = $request->Input('refered_by_reward_amount');
 	    	
@@ -135,8 +136,8 @@ class ReferalStatusController extends Controller
                     'is_purchased' => $this->referal_status->is_purchased,
                     'is_referal_rewarded' => $this->referal_status->is_referal_rewarded,
                     'is_refered_by_rewarded' => $this->referal_status->is_refered_by_rewarded,
-                    'referal_rewarded_type' => $this->referal_status->referal_rewarded_type,
-                    'refered_by_rewarded_type' => $this->referal_status->refered_by_rewarded_type,
+                    'referal_reward_type' => $this->referal_status->referal_reward_type,
+                    'refered_by_reward_type' => $this->referal_status->refered_by_reward_type,
                     'referal_reward_amount' => $this->referal_status->referal_reward_amount,
                     'refered_by_reward_amount' => $this->referal_status->refered_by_reward_amount
 				]
@@ -146,9 +147,9 @@ class ReferalStatusController extends Controller
 
     public function edit($id) {
 
-    	$referal_status = $this->referal_status->where('id',$id)->get();
+    	$referal_status = $this->referal_status->where('id',$id)->first();
 
-    	if($referal_status->count() == 0) {
+    	if(!isset($referal_status->id)) {
     		return response()->json([
 				'status' => 'error',
 				'code' => 400,
@@ -169,8 +170,8 @@ class ReferalStatusController extends Controller
                 'is_purchased' => $referal_status->is_purchased,
                 'is_referal_rewarded' => $referal_status->is_referal_rewarded,
                 'is_refered_by_rewarded' => $referal_status->is_refered_by_rewarded,
-                'referal_rewarded_type' => $referal_status->referal_rewarded_type,
-                'refered_by_rewarded_type' => $referal_status->refered_by_rewarded_type,
+                'referal_reward_type' => $referal_status->referal_reward_type,
+                'refered_by_reward_type' => $referal_status->refered_by_reward_type,
                 'referal_reward_amount' => $referal_status->referal_reward_amount,
                 'refered_by_reward_amount' => $referal_status->refered_by_reward_amount,
 			]
@@ -204,7 +205,8 @@ class ReferalStatusController extends Controller
 				'is_purchased' => $request->Input('is_purchased'),
 				'is_referal_rewarded' => $request->Input('is_referal_rewarded'),
 				'is_refered_by_rewarded' => $request->Input('is_refered_by_rewarded'),
-				'referal_rewarded_type' => $request->Input('referal_rewarded_type'),
+                'referal_reward_type' => $request->Input('referal_reward_type'),
+				'refered_by_reward_type' => $request->Input('refered_by_reward_type'),
 				'referal_reward_amount' => $request->Input('referal_reward_amount'),
 				'refered_by_reward_amount' => $request->Input('refered_by_reward_amount')
 			];
@@ -231,7 +233,8 @@ class ReferalStatusController extends Controller
                     'is_purchased' => $referal_status->is_purchased,
                     'is_referal_rewarded' => $referal_status->is_referal_rewarded,
                     'is_refered_by_rewarded' => $referal_status->is_refered_by_rewarded,
-                    'referal_rewarded_type' => $referal_status->referal_rewarded_type,
+                    'referal_reward_type' => $referal_status->referal_reward_type,
+                    'refered_by_reward_type' => $referal_status->refered_by_reward_type,
                     'referal_reward_amount' => $referal_status->referal_reward_amount,
                     'refered_by_reward_amount' => $referal_status->refered_by_reward_amount
 				]
@@ -269,7 +272,7 @@ class ReferalStatusController extends Controller
                             $query->with('product','user')->first();
                         }])->first();
         
-        if($referal_status->count() == 0) {
+        if(!isset($referal_status->id)) {
     		return response()->json([
 				'status' => 'error',
 				'code' => 400,
@@ -290,8 +293,8 @@ class ReferalStatusController extends Controller
                 'is_purchased' => $referal_status->is_purchased,
                 'is_referal_rewarded' => $referal_status->is_referal_rewarded,
                 'is_refered_by_rewarded' => $referal_status->is_refered_by_rewarded,
-                'referal_rewarded_type' => $referal_status->referal_rewarded_type,
-                'refered_by_rewarded_type' => $referal_status->refered_by_rewarded_type,
+                'referal_reward_type' => $referal_status->referal_reward_type,
+                'refered_by_reward_type' => $referal_status->refered_by_reward_type,
                 'referal_reward_amount' => $referal_status->referal_reward_amount,
                 'refered_by_reward_amount' => $referal_status->refered_by_reward_amount,
                 'referal' => [
