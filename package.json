@@ -14,11 +14,11 @@
     "axios": "^0.17",
     "bootstrap-sass": "^3.3.7",
     "cross-env": "^5.1",
-    "laravel-mix": "^2.1.14",
+    "laravel-mix": "^6.0.49",
     "lodash": "^4.17.4",
     "node-sass": "^4.11.0",
     "vue": "^2.5.17",
-    "webpack": "^3.11.0",
+    "webpack": "^5.75.0",
     "webpack-command": "^0.4.2"
   },
   "dependencies": {
